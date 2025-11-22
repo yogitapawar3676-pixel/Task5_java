@@ -1,0 +1,118 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+// Base Account Class
+class Account {
+    protected String accountNumber;
+    protected double balance;
+    protected List<String> transactionHistory;
+
+    public Account(String accountNumber, double initialBalance) {
+        this.accountNumber = accountNumber;
+        this.balance = initialBalance;
+        this.transactionHistory = new ArrayList<>();
+        transactionHistory.add("Account created with balance: " + initialBalance);
+    }
+
+    public void deposit(double amount) {
+        if (amount > 0) {
+            balance += amount;
+            transactionHistory.add("Deposited: " + amount + " | New Balance: " + balance);
+            System.out.println("Deposit Successful.");
+        } else {
+            System.out.println("Invalid amount!");
+        }
+    }
+
+    public void withdraw(double amount) {
+        if (amount > 0 && balance >= amount) {
+            balance -= amount;
+            transactionHistory.add("Withdrawn: " + amount + " | New Balance: " + balance);
+            System.out.println("Withdrawal Successful.");
+        } else {
+            System.out.println("Insufficient Balance or Invalid Amount!");
+        }
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+
+    public void printTransactionHistory() {
+        System.out.println("\nTransaction History:");
+        for (String record : transactionHistory) {
+            System.out.println("- " + record);
+        }
+    }
+}
+
+// Savings Account (Inheritance Example)
+class SavingsAccount extends Account {
+
+    public SavingsAccount(String accNumber, double initialBalance) {
+        super(accNumber, initialBalance);
+    }
+
+    @Override
+    public void withdraw(double amount) {
+        if (amount > 0 && balance - amount >= 500) { // Maintain minimum balance
+            balance -= amount;
+            transactionHistory.add("Savings Withdraw: " + amount + " | New Balance: " + balance);
+            System.out.println("Withdrawal Successful.");
+        } else {
+            System.out.println("Insufficient balance! Savings account requires minimum ₹500.");
+        }
+    }
+}
+
+// Main Simulation
+public class BankSimulation {
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        SavingsAccount account = new SavingsAccount("ACC001", 2000);
+
+        while (true) {
+            System.out.println("\n====== BANK ACCOUNT SIMULATION ======");
+            System.out.println("1. Deposit");
+            System.out.println("2. Withdraw");
+            System.out.println("3. Check Balance");
+            System.out.println("4. Transaction History");
+            System.out.println("5. Exit");
+            System.out.print("Enter your choice: ");
+
+            int choice = scanner.nextInt();
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter amount to deposit: ");
+                    double depositAmount = scanner.nextDouble();
+                    account.deposit(depositAmount);
+                    break;
+
+                case 2:
+                    System.out.print("Enter amount to withdraw: ");
+                    double withdrawAmount = scanner.nextDouble();
+                    account.withdraw(withdrawAmount);
+                    break;
+
+                case 3:
+                    System.out.println("Current Balance: ₹" + account.getBalance());
+                    break;
+
+                case 4:
+                    account.printTransactionHistory();
+                    break;
+
+                case 5:
+                    System.out.println("Thank you for using the bank system!");
+                    scanner.close();
+                    return;
+
+                default:
+                    System.out.println("Invalid choice! Try again.");
+            }
+        }
+    }
+}
